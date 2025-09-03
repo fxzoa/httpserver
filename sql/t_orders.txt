@@ -1,0 +1,42 @@
+CREATE TABLE orders (
+ order_id BIGSERIAL PRIMARY KEY, -- 注文ID
+ user_id BIGINT NOT NULL REFERENCES users(user_id), -- 購入者ID
+ order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 注文日時
+ total_amount DECIMAL(10, 2) NOT NULL, -- 合計金額
+ status VARCHAR(20) NOT NULL, -- 状態 (例: pending, paid, shipped, canceled)
+ payment_method VARCHAR(50), -- 支払い方法 (例: credit_card, bank_transfer)
+ shipping_address_id BIGINT, -- 配送先ID（user_addresses参照）
+ note TEXT, -- 購入者メモ
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 作成日時
+ updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- 更新日時
+);
+
+-- updated_atの自動更新はトリガーで実装します
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+ NEW.updated_at = NOW();
+ RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER update_orders_updated_at
+BEFORE UPDATE ON orders
+FOR EACH ROW
+EXECUTE PROCEDURE update_updated_at_column();
+
+-- コメント付与
+COMMENT ON TABLE orders IS '注文テーブル';
+
+COMMENT ON COLUMN orders.order_id IS '注文ID';
+COMMENT ON COLUMN orders.user_id IS '購入者ID';
+COMMENT ON COLUMN orders.order_date IS '注文日時';
+COMMENT ON COLUMN orders.total_amount IS '合計金額';
+COMMENT ON COLUMN orders.status IS '状態 (pending, paid, shipped, canceled)';
+COMMENT ON COLUMN orders.payment_method IS '支払い方法 (credit_card, bank_transfer)';
+COMMENT ON COLUMN orders.shipping_address_id IS '配送先ID（user_addresses参照）';
+COMMENT ON COLUMN orders.note IS '購入者メモ';
+COMMENT ON COLUMN orders.created_at IS '作成日時';
+COMMENT ON COLUMN orders.updated_at IS '更新日時';
+

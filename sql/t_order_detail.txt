@@ -1,0 +1,41 @@
+CREATE TABLE order_items (
+ order_item_id BIGSERIAL PRIMARY KEY,
+ order_id BIGINT NOT NULL REFERENCES orders(order_id) ON DELETE CASCADE,
+ product_id BIGINT NOT NULL REFERENCES products(product_id),
+ quantity INT NOT NULL,
+ unit_price DECIMAL(10, 2) NOT NULL, -- 注文時点の単価
+ subtotal DECIMAL(10, 2) NOT NULL, -- quantity × unit_price
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- トリガー関数作成
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+ NEW.updated_at = CURRENT_TIMESTAMP;
+ RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- トリガー作成
+CREATE TRIGGER trg_update_order_items_updated_at
+BEFORE UPDATE ON order_items
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+-- テーブルコメント
+COMMENT ON TABLE orders IS ' 注文明細テーブル';
+
+-- 注文明細テーブル: order_items のカラムコメント
+COMMENT ON TABLE order_items IS '注文明細を管理するテーブル';
+
+COMMENT ON COLUMN order_items.order_item_id IS '注文明細のユニークID（自動採番）';
+COMMENT ON COLUMN order_items.order_id IS '関連する注文のID（ordersテーブルの外部キー、親注文削除時に明細も削除される）';
+COMMENT ON COLUMN order_items.product_id IS '注文された商品のID（productsテーブルの外部キー）';
+COMMENT ON COLUMN order_items.quantity IS '注文数量';
+COMMENT ON COLUMN order_items.unit_price IS '注文時点での単価（商品価格が変動しても過去注文の履歴を保持するため）';
+COMMENT ON COLUMN order_items.subtotal IS '小計（quantity × unit_price）';
+COMMENT ON COLUMN order_items.created_at IS 'レコード作成日時（デフォルトで現在時刻）';
+COMMENT ON COLUMN order_items.updated_at IS 'レコード更新日時（デフォルトで現在時刻）';
+

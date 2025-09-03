@@ -1,0 +1,194 @@
+openapi: 3.0.0
+info:
+  title: User Management API
+  description: ユーザー情報管理API
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+
+servers:
+  - url: https://api.example.com/v1
+    description: Production server
+  - url: https://staging-api.example.com/v1
+    description: Staging server
+
+paths:
+  /users/{user_id}:
+    get:
+      summary: ユーザー情報を取得する
+      description: 指定されたユーザーIDの情報を取得します
+      operationId: getUserById
+      tags:
+        - Users
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ユーザーID
+          schema:
+            type: integer
+            format: int64
+            example: 123
+      responses:
+        '200':
+          description: ユーザー情報の取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: 無効なリクエスト
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: 認証エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: 権限エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: ユーザーが見つからない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - bearerAuth: []
+
+components:
+  schemas:
+    UserResponse:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          format: int64
+          description: ユーザーID
+          example: 123
+        username:
+          type: string
+          description: 表示用ユーザー名
+          example: "山田太郎"
+        email:
+          type: string
+          format: email
+          description: メールアドレス
+          example: "taro.yamada@example.com"
+        phone_number:
+          type: string
+          nullable: true
+          description: 電話番号
+          example: "03-1234-5678"
+        gender:
+          type: string
+          nullable: true
+          enum: ["M", "F", "O"]
+          description: 性別 (M=男性, F=女性, O=その他)
+          example: "M"
+        birth_date:
+          type: string
+          format: date
+          nullable: true
+          description: 生年月日
+          example: "1990-01-01"
+        profile_image_url:
+          type: string
+          nullable: true
+          description: プロフィール画像URL
+          example: "https://example.com/images/profile.jpg"
+        address:
+          $ref: '#/components/schemas/Address'
+        is_active:
+          type: boolean
+          description: アクティブ状態
+          example: true
+        email_verified:
+          type: boolean
+          description: メール認証済みか
+          example: true
+        created_at:
+          type: string
+          format: date-time
+          description: 作成日時
+          example: "2023-01-01T10:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: 更新日時
+          example: "2023-01-02T15:30:00Z"
+
+    Address:
+      type: object
+      properties:
+        address_line1:
+          type: string
+          nullable: true
+          description: 住所1
+          example: "〇〇区△△1-2-3"
+        address_line2:
+          type: string
+          nullable: true
+          description: 住所2
+          example: "マンション名 101号室"
+        city:
+          type: string
+          nullable: true
+          description: 市区町村
+          example: "渋谷区"
+        state:
+          type: string
+          nullable: true
+          description: 都道府県
+          example: "東京都"
+        postal_code:
+          type: string
+          nullable: true
+          description: 郵便番号
+          example: "150-0001"
+        country:
+          type: string
+          nullable: true
+          description: 国
+          example: "日本"
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: エラーコード
+              example: "USER_NOT_FOUND"
+            message:
+              type: string
+              description: エラーメッセージ
+              example: "指定されたユーザーは存在しません"
+            details:
+              type: array
+              items:
+                type: object
+                description: エラーの詳細情報
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWTトークンによる認証

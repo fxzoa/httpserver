@@ -1,0 +1,4 @@
+### pull ollama model
+curl http://192.168.107.141:11434/api/pull -d '{
+  "name": "kirito1/qwen3-coder:4b"
+}'

@@ -1,0 +1,87 @@
+{
+  "models": [
+    {
+      "name": "qwen3-coder:latest",
+      "model": "qwen3-coder:latest",
+      "modified_at": "2025-08-12T10:52:16.532601583+09:00",
+      "size": 18556701140,
+      "digest": "ad67f85ca2502e92936ef793bf29a312e1912ecd1e2c09c9c2963adf1debde78",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "qwen3moe",
+        "families": [
+          "qwen3moe"
+        ],
+        "parameter_size": "30.5B",
+        "quantization_level": "Q4_K_M"
+      }
+    },
+    {
+      "name": "codellama:70b",
+      "model": "codellama:70b",
+      "modified_at": "2025-07-31T13:21:42.088638091+09:00",
+      "size": 38872431643,
+      "digest": "e59b580dfce7ae2e97235344bd8fd4c1ace9c6aff683652ac0ea3b4c9f4865f1",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "llama",
+        "families": [
+          "llama"
+        ],
+        "parameter_size": "69B",
+        "quantization_level": "Q4_0"
+      }
+    },
+    {
+      "name": "sqlcoder:15b",
+      "model": "sqlcoder:15b",
+      "modified_at": "2025-07-31T13:21:24.283212304+09:00",
+      "size": 8987630230,
+      "digest": "93bb0e8a904ff98bcc6fa5cf3b8e63dc69203772f4bc713f761c82684541d08d",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "starcoder",
+        "families": null,
+        "parameter_size": "15B",
+        "quantization_level": "Q4_0"
+      }
+    },
+    {
+      "name": "gemma3:27b",
+      "model": "gemma3:27b",
+      "modified_at": "2025-07-17T14:34:06.724455496+09:00",
+      "size": 17396936941,
+      "digest": "a418f5838eaf7fe2cfe0a3046c8384b68ba43a4435542c942f9db00a5f342203",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "gemma3",
+        "families": [
+          "gemma3"
+        ],
+        "parameter_size": "27.4B",
+        "quantization_level": "Q4_K_M"
+      }
+    },
+    {
+      "name": "kun432/cl-nagoya-ruri-large:latest",
+      "model": "kun432/cl-nagoya-ruri-large:latest",
+      "modified_at": "2025-07-09T11:16:37.93316963+09:00",
+      "size": 675150173,
+      "digest": "4df32234386c9ead3a5d5ec0ff0076e3afcd42dbb8341dbc0a19327ef738327a",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "bert",
+        "families": [
+          "bert"
+        ],
+        "parameter_size": "336.39M",
+        "quantization_level": "F16"
+      }
+    }
+  ]
+}

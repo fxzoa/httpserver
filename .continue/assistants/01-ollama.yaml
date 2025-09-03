@@ -1,0 +1,169 @@
+name: ollama
+version: 1.1.0
+schema: v1
+
+models:
+  - name: qwen3-coder(fix)
+    provider: ollama
+    model: qwen3-coder:latest
+    apiBase: ${{ secrets.OLLAMA_URL }}
+    roles: ["edit", "summarize"]
+    promptTemplates:
+      edit: |
+        The user has requested a section of code in a file to be fixed.
+        This is the prefix of the file:
+        ```java
+        {{{ prefix }}}
+        ```
+
+        This is the suffix of the file:
+        ```java
+        {{{ suffix }}}
+        ```
+
+        This is the code to fix:
+        ```java
+        {{{ codeToEdit }}}
+        ```
+        
+        The user's request is: "Fix any bugs or issues in this code. Add Japanese JavaDoc if not present."
+        DO NOT output any natural language, only output the fixed code.
+        I want JavaDoc to be created in Japanese instead of English.
+        Here is the fixed code:
+
+  - name: qwen3-coder(optimize)
+    provider: ollama
+    model: qwen3-coder:latest
+    apiBase: ${{ secrets.OLLAMA_URL }}
+    roles: ["edit", "apply"]
+    promptTemplates:
+      edit: |
+        The user has requested a section of code in a file to be optimized.
+        This is the prefix of the file:
+        ```java
+        {{{ prefix }}}
+        ```
+
+        This is the suffix of the file:
+        ```java
+        {{{ suffix }}}
+        ```
+
+        This is the code to optimize:
+        ```java
+        {{{ codeToEdit }}}
+        ```
+
+        The user's request is: "Optimize this code for better performance and readability. Add Japanese JavaDoc if not present."
+        DO NOT output any natural language, only output the optimized code.
+        I want JavaDoc to be created in Japanese instead of English.
+        Here is the optimized code:
+
+  - name: qwen3-coder(javadoc)
+    provider: ollama
+    model: qwen3-coder:latest
+    apiBase: ${{ secrets.OLLAMA_URL }}
+    roles: ["edit"]
+    promptTemplates:
+      edit: |
+        The user has requested a section of code in a file to be rewritten.
+        This is the prefix of the file:
+        ```java
+        {{{ prefix }}}
+        ```
+
+        This is the suffix of the file:
+        ```java
+        {{{ suffix }}}
+        ```
+
+        This is the code to rewrite:
+        ```java
+        {{{ codeToEdit }}}
+        ```
+
+        The user's request is: "Write a docstring for this code. Do not change anything about the code itself."
+        DO NOT output any natural language, only output the code changes.
+        I want JavaDoc to be created in Japanese instead of English.
+        Here is the rewritten code: 
+        
+  - name: codellama:70b
+    provider: ollama
+    model: codellama:70b
+    apiBase: ${{ secrets.OLLAMA_URL }}
+    roles: ["chat", "summarize"]
+    defaultCompletionOptions:
+      temperature: 0.1    # 高い一貫性
+      topP: 0.9           # 適度な多様性
+    chatOptions:
+      baseSystemMessage: |
+        あなたは優秀な日本人プログラマーです。
+        - 常に日本語で回答してください
+        - コードコメントも日本語で記述してください
+        - JavaDocは適切な日本語で記述してください
+        - コードの品質と可読性を重視してください
+      baseAgentSystemMessage: |
+        あなたは経験豊富な日本人ソフトウェアエンジニアです。
+        段階的に問題を分析し、最適なソリューションを提供してください。
+
+prompts:
+  - name: review
+    description: 包括的コードレビュー
+    prompt: |
+      選択コードを以下の観点でレビューしてください：
+      1. 構文・命名規則 2. ロジック・アルゴリズム 3. セキュリティ 4. パフォーマンス 5. 保守性
+      問題点と修正提案を重要度順に提示してください。
+
+  - name: security
+    description: セキュリティチェック
+    prompt: |
+      セキュリティ脆弱性をOWASP基準でチェックし、修正方法を提案してください。
+      チェック項目: SQLインジェクション、XSS、CSRF、認証認可、入力検証、暗号化
+
+  - name: document
+    description: ドキュメント生成
+    prompt: |
+      包括的なドキュメントを生成：概要、引数、戻り値、使用例、注意事項、関連項目
+      Pythonの場合はdocstring形式、日本語で記述してください。
+
+  - name: readme
+    description: README生成
+    prompt: |
+      以下構成のREADME.mdを生成：プロジェクト概要、機能一覧、インストール方法、
+      使用方法、API仕様、設定方法、トラブルシューティング
+
+  - name: clean
+    description: コードクリーンアップ
+    prompt: |
+      可読性・保守性向上のためクリーンアップ：命名改善、構造整理、重複除去、
+      簡潔化、スタイル統一、エラーハンドリング改善
+
+  - name: modernize
+    description: コードモダン化
+    prompt: |
+      最新ベストプラクティスでモダン化：最新言語機能活用、推奨ライブラリ移行、
+      非推奨機能置換、型安全性向上、非同期処理改善
+
+  - name: test
+    description: テストケース生成
+    prompt: |
+      包括的テストケース生成：正常系、異常系、境界値、エッジケース、統合テスト
+      使用フレームワークに応じた形式で出力してください。
+
+  - name: mock
+    description: モックデータ生成
+    prompt: |
+      テスト用モックデータ生成：構造適合、リアルなサンプル、境界値・異常値、
+      大量・少量データ、日本語データ含む
+
+  - name: explain
+    description: コード詳細解説
+    prompt: |
+      初心者向け詳細解説：処理フロー、各部分の役割、アルゴリズム、重要ポイント、
+      応用例。図表・サンプル交えて段階的に説明してください。
+
+  - name: compare
+    description: コード比較分析
+    prompt: |
+      複数コード/手法の比較分析：パフォーマンス、可読性・保守性、拡張性・柔軟性、
+      学習コスト・実装難易度、適用場面。表形式で整理してください。
